@@ -85,11 +85,15 @@ export async function crearCuenta(jugador, partidosAntiguos = []) {
   let codigo = codigoGuardado()
   if (!data.session) {
     codigo = nuevoCodigo()
-    const respuesta = await supabase.auth.signUp(credenciales(codigo))
-    if (respuesta.error) throw new Error(traducirError(respuesta.error.message))
-    if (!respuesta.data.session) {
-      throw new Error('Supabase pide confirmar el correo: desactiva "Confirm email" en el panel.')
+    // La cuenta la crea la función "crear-cuenta" de Supabase (supabase/functions),
+    // ya confirmada, para que no intente mandar correos a la dirección inventada.
+    const creada = await supabase.functions.invoke('crear-cuenta', { body: { codigo } })
+    if (creada.error) {
+      const detalle = await creada.error.context?.json?.().catch(() => null)
+      throw new Error(traducirError(detalle?.error ?? creada.error.message))
     }
+    const respuesta = await supabase.auth.signInWithPassword(credenciales(codigo))
+    if (respuesta.error) throw new Error(traducirError(respuesta.error.message))
     recordarCodigo(codigo)
     data = respuesta.data
   }
