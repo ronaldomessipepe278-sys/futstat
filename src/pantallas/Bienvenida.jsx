@@ -32,8 +32,7 @@ export default function Bienvenida({ invitado, onCrear, onEntrar }) {
 
       {invitado && (
         <div className="rounded-xl border border-neon/40 bg-neon/5 p-4 text-sm">
-          Te han invitado a un grupo. Crea tu carta (o entra con tu código) y te unirás al
-          momento.
+          Te han invitado a un grupo. Crea tu carta (o entra con tu código) y te unirás al momento.
         </div>
       )}
 

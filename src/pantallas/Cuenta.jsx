@@ -16,13 +16,11 @@ export default function Cuenta({ codigo, nueva, onListo, onSalir, onBorrarCuenta
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-titulo text-2xl font-bold">
-          {nueva ? '¡Carta creada!' : 'Mi cuenta'}
-        </h1>
+        <h1 className="font-titulo text-2xl font-bold">{nueva ? '¡Carta creada!' : 'Mi cuenta'}</h1>
         <p className="mt-1 text-sm text-apagado">
-          Este es tu <strong className="text-texto">código de acceso</strong>. Con él entras
-          desde cualquier móvil u ordenador. Guárdalo bien (captura de pantalla, notas…) y no se
-          lo pases a nadie: quien lo tenga puede entrar en tu cuenta.
+          Este es tu <strong className="text-texto">código de acceso</strong>. Con él entras desde
+          cualquier móvil u ordenador. Guárdalo bien (captura de pantalla, notas…) y no se lo pases
+          a nadie: quien lo tenga puede entrar en tu cuenta.
         </p>
       </div>
 

@@ -1,9 +1,12 @@
 import { ATRIBUTOS, nivel } from '../logic/valoracion.js'
 
 // La carta de jugador. Solo dibuja: los números le llegan ya calculados.
-export default function Carta({ apodo, valoracion, atributos, cambio, partidosJugados }) {
+// `estatica` = sin animaciones (para convertirla en imagen).
+export default function Carta({ apodo, valoracion, atributos, cambio, partidosJugados, estatica }) {
   return (
-    <div className="brillo-neon mx-auto w-full max-w-[320px]">
+    <div
+      className={`mx-auto w-full max-w-[320px] ${estatica ? 'brillo-fijo' : 'brillo-neon aparecer'}`}
+    >
       {/* Capa exterior = borde neón */}
       <div className="forma-carta bg-gradient-to-br from-neon via-neon-suave to-neon p-[2px]">
         <div className="forma-carta relative overflow-hidden bg-gradient-to-b from-[#0d2236] via-panel to-[#060a14] px-6 pt-6 pb-7">

@@ -28,9 +28,19 @@ export default function CaraACara({ jugadores, izquierda, derecha, onCambiar }) 
   return (
     <div className="rounded-2xl border border-borde bg-panel p-4">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <Selector valor={izquierda} jugadores={jugadores} otro={derecha} onCambiar={(id) => onCambiar(id, derecha)} />
+        <Selector
+          valor={izquierda}
+          jugadores={jugadores}
+          otro={derecha}
+          onCambiar={(id) => onCambiar(id, derecha)}
+        />
         <span className="font-titulo text-sm font-bold text-apagado">VS</span>
-        <Selector valor={derecha} jugadores={jugadores} otro={izquierda} onCambiar={(id) => onCambiar(izquierda, id)} />
+        <Selector
+          valor={derecha}
+          jugadores={jugadores}
+          otro={izquierda}
+          onCambiar={(id) => onCambiar(izquierda, id)}
+        />
       </div>
 
       <ul className="mt-4 space-y-2">

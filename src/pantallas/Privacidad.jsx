@@ -17,13 +17,12 @@ export default function Privacidad({ hayNube, onVolver, onBorrarTodo }) {
             <strong>código de acceso</strong> que se crea al hacer su carta.
           </p>
           <p>
-            Guardamos tu apodo, tus atributos, tus partidos (resultado, goles, asistencias y nota)
-            y los grupos a los que perteneces. Esos datos están en Supabase, nuestro proveedor de
-            base de datos.
+            Guardamos tu apodo, tus atributos, tus partidos (resultado, goles, asistencias y nota) y
+            los grupos a los que perteneces. Esos datos están en Supabase, nuestro proveedor de base
+            de datos.
           </p>
           <p>
-            Tu carta y tus partidos solo los ven las personas de tus grupos. Nadie más puede
-            verlos.
+            Tu carta y tus partidos solo los ven las personas de tus grupos. Nadie más puede verlos.
           </p>
           <p>
             Puedes borrar tu cuenta y todos tus datos cuando quieras desde{' '}
@@ -36,15 +35,15 @@ export default function Privacidad({ hayNube, onVolver, onBorrarTodo }) {
       ) : (
         <p>
           Ahora mismo, todo lo que apuntas (tu carta y tus partidos) se guarda{' '}
-          <strong>solo en este navegador</strong>, en tu dispositivo. No se envía a ningún
-          servidor y nadie más puede verlo.
+          <strong>solo en este navegador</strong>, en tu dispositivo. No se envía a ningún servidor
+          y nadie más puede verlo.
         </p>
       )}
 
       <p>No pedimos ni guardamos tu nombre, ubicación, edad, foto ni teléfono.</p>
       <p>
-        FutStat es un proyecto independiente y no tiene relación con EA Sports, FIFA ni ningún
-        club de fútbol.
+        FutStat es un proyecto independiente y no tiene relación con EA Sports, FIFA ni ningún club
+        de fútbol.
       </p>
 
       <div className="flex gap-3 pt-2">
@@ -57,7 +56,9 @@ export default function Privacidad({ hayNube, onVolver, onBorrarTodo }) {
         {!hayNube && (
           <button
             onClick={() => {
-              if (confirm('Esto borrará tu carta y todos tus partidos de este dispositivo. ¿Seguro?'))
+              if (
+                confirm('Esto borrará tu carta y todos tus partidos de este dispositivo. ¿Seguro?')
+              )
                 onBorrarTodo()
             }}
             className="flex-1 rounded-xl border border-baja/60 py-3 font-titulo font-bold text-baja"

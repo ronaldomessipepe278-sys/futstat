@@ -151,10 +151,17 @@ function GruposConectados({ yo, codigoInvitacion, onInvitacionUsada }) {
       {grupos.length === 0 || formulario ? (
         <CrearOUnirse onAccion={alCrearOUnirse} />
       ) : (
-        grupo && <VistaGrupo grupo={grupo} jugadores={jugadores} yo={yo} onSalir={async () => {
-          await nube.salirDeGrupo(grupo.id, yo.id)
-          await recargarGrupos()
-        }} />
+        grupo && (
+          <VistaGrupo
+            grupo={grupo}
+            jugadores={jugadores}
+            yo={yo}
+            onSalir={async () => {
+              await nube.salirDeGrupo(grupo.id, yo.id)
+              await recargarGrupos()
+            }}
+          />
+        )
       )}
     </div>
   )
@@ -212,7 +219,9 @@ function CrearOUnirse({ onAccion }) {
         className="rounded-2xl border border-borde bg-panel p-4"
       >
         <h2 className="font-titulo text-lg font-bold">Crear un grupo</h2>
-        <p className="text-sm text-apagado">Tu pachanga, tu equipo o tu clase. Sin nombres reales.</p>
+        <p className="text-sm text-apagado">
+          Tu pachanga, tu equipo o tu clase. Sin nombres reales.
+        </p>
         <div className="mt-3 flex gap-2">
           <input
             value={nombre}
@@ -260,72 +269,80 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
     <div className="space-y-8">
       <Invitar grupo={grupo} />
 
-      <section>
-        <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
-          Ranking · {ranking.length} {ranking.length === 1 ? 'jugador' : 'jugadores'}
-        </h2>
-        <ol className="space-y-2">
-          {ranking.map((j, i) => (
-            <li key={j.id}>
-              <button
-                onClick={() => {
-                  if (j.id === yo.id) return
-                  setComparar([yo.id, j.id])
-                  document.getElementById('cara-a-cara')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left ${
-                  j.id === yo.id ? 'border-neon/60 bg-neon/5' : 'border-borde bg-panel'
-                }`}
-              >
-                <span
-                  className={`w-6 text-center font-titulo text-lg font-bold ${
-                    i < 3 ? 'text-neon' : 'text-apagado'
+      {/* En ordenador: ranking y cara a cara uno al lado del otro */}
+      <div className="space-y-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0">
+        <section>
+          <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
+            Ranking · {ranking.length} {ranking.length === 1 ? 'jugador' : 'jugadores'}
+          </h2>
+          <ol className="space-y-2">
+            {ranking.map((j, i) => (
+              <li key={j.id}>
+                <button
+                  onClick={() => {
+                    if (j.id === yo.id) return
+                    setComparar([yo.id, j.id])
+                    document.getElementById('cara-a-cara')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left ${
+                    j.id === yo.id ? 'border-neon/60 bg-neon/5' : 'border-borde bg-panel'
                   }`}
                 >
-                  {i + 1}
-                </span>
-                <span className="forma-carta flex h-12 w-10 items-center justify-center bg-gradient-to-b from-neon to-neon-suave font-titulo text-lg font-bold text-fondo">
-                  {j.valoracion}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-titulo font-bold">
-                    {j.apodo}
-                    {j.id === yo.id && <span className="text-neon"> (tú)</span>}
-                  </span>
-                  <span className="text-xs text-apagado">
-                    {nivel(j.valoracion)} · {j.partidos.length} partidos
-                  </span>
-                </span>
-                {j.cambio !== 0 && (
                   <span
-                    className={`font-titulo text-sm font-bold ${j.cambio > 0 ? 'text-sube' : 'text-baja'}`}
+                    className={`w-6 text-center font-titulo text-lg font-bold ${
+                      i < 3 ? 'text-neon' : 'text-apagado'
+                    }`}
                   >
-                    {j.cambio > 0 ? `▲${j.cambio}` : `▼${-j.cambio}`}
+                    {i + 1}
                   </span>
-                )}
-              </button>
-            </li>
-          ))}
-        </ol>
-      </section>
+                  <span
+                    className={`forma-carta flex h-12 w-10 items-center justify-center bg-gradient-to-b from-neon to-neon-suave font-titulo text-lg font-bold text-fondo ${
+                      i === 0 && ranking.length > 1 ? 'brillo-neon' : ''
+                    }`}
+                  >
+                    {j.valoracion}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-titulo font-bold">
+                      {j.apodo}
+                      {j.id === yo.id && <span className="text-neon"> (tú)</span>}
+                    </span>
+                    <span className="text-xs text-apagado">
+                      {i === 0 && ranking.length > 1 && <span className="text-neon">Líder · </span>}
+                      {nivel(j.valoracion)} · {j.partidos.length} partidos
+                    </span>
+                  </span>
+                  {j.cambio !== 0 && (
+                    <span
+                      className={`font-titulo text-sm font-bold ${j.cambio > 0 ? 'text-sube' : 'text-baja'}`}
+                    >
+                      {j.cambio > 0 ? `▲${j.cambio}` : `▼${-j.cambio}`}
+                    </span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ol>
+        </section>
 
-      <section id="cara-a-cara" className="scroll-mt-4">
-        <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
-          Cara a cara
-        </h2>
-        {rival ? (
-          <CaraACara
-            jugadores={ranking}
-            izquierda={izquierda}
-            derecha={derecha}
-            onCambiar={(a, b) => setComparar([a, b])}
-          />
-        ) : (
-          <p className="text-sm text-apagado">
-            Invita a alguien al grupo para poder compararte cara a cara.
-          </p>
-        )}
-      </section>
+        <section id="cara-a-cara" className="scroll-mt-4">
+          <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
+            Cara a cara
+          </h2>
+          {rival ? (
+            <CaraACara
+              jugadores={ranking}
+              izquierda={izquierda}
+              derecha={derecha}
+              onCambiar={(a, b) => setComparar([a, b])}
+            />
+          ) : (
+            <p className="text-sm text-apagado">
+              Invita a alguien al grupo para poder compararte cara a cara.
+            </p>
+          )}
+        </section>
+      </div>
 
       <button
         onClick={() => {
@@ -408,7 +425,9 @@ function Proximamente() {
     <div className="space-y-6">
       <div>
         <h1 className="font-titulo text-2xl font-bold">Mi grupo</h1>
-        <p className="mt-1 text-sm text-apagado">Compárate con tus colegas. Muy pronto disponible.</p>
+        <p className="mt-1 text-sm text-apagado">
+          Compárate con tus colegas. Muy pronto disponible.
+        </p>
       </div>
       <ul className="space-y-3">
         {NOVEDADES.map((n, i) => (

@@ -1,4 +1,5 @@
-// Barra de menú fija abajo, como en las apps del móvil.
+// Menú principal. En el móvil va fijo abajo (como en las apps);
+// en el ordenador (`arriba`) va en la cabecera.
 const OPCIONES = [
   {
     pantalla: 'carta',
@@ -15,9 +16,49 @@ const OPCIONES = [
   },
 ]
 
-export default function Menu({ pantalla, onIr }) {
+function Icono({ children }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-borde bg-fondo/90 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  )
+}
+
+export default function Menu({ pantalla, onIr, arriba }) {
+  if (arriba) {
+    return (
+      <nav className="hidden gap-2 lg:flex">
+        {OPCIONES.map((o) => (
+          <button
+            key={o.pantalla}
+            onClick={() => onIr(o.pantalla)}
+            aria-current={pantalla === o.pantalla ? 'page' : undefined}
+            className={`rounded-xl px-4 py-2 font-titulo font-bold ${
+              o.destacado
+                ? 'bg-neon text-fondo'
+                : pantalla === o.pantalla
+                  ? 'bg-neon/10 text-neon'
+                  : 'text-apagado hover:text-texto'
+            }`}
+          >
+            {o.destacado ? '+ Apuntar partido' : o.texto}
+          </button>
+        ))}
+      </nav>
+    )
+  }
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-borde bg-fondo/90 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
       <ul className="mx-auto grid max-w-md grid-cols-3">
         {OPCIONES.map((o) => {
           const activa = pantalla === o.pantalla
@@ -35,18 +76,7 @@ export default function Menu({ pantalla, onIr }) {
                     o.destacado ? 'bg-neon text-fondo shadow-[0_0_16px_rgb(34_229_240/0.5)]' : ''
                   }`}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    {o.icono}
-                  </svg>
+                  <Icono>{o.icono}</Icono>
                 </span>
                 {o.texto}
               </button>

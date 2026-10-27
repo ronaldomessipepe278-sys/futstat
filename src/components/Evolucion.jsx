@@ -23,10 +23,7 @@ export default function Evolucion({ puntos }) {
       role="img"
       aria-label={`Valoración: de ${puntos[0]} a ${puntos.at(-1)}`}
     >
-      <polygon
-        points={`0,${alto} ${linea} ${ancho},${alto}`}
-        fill="rgb(34 229 240 / 0.12)"
-      />
+      <polygon points={`0,${alto} ${linea} ${ancho},${alto}`} fill="rgb(34 229 240 / 0.12)" />
       <polyline
         points={linea}
         fill="none"
@@ -35,7 +32,15 @@ export default function Evolucion({ puntos }) {
         strokeLinejoin="round"
       />
       {puntos.map((v, i) => (
-        <circle key={i} cx={x(i)} cy={y(v)} r="3.5" fill="var(--color-fondo)" stroke="var(--color-neon)" strokeWidth="2" />
+        <circle
+          key={i}
+          cx={x(i)}
+          cy={y(v)}
+          r="3.5"
+          fill="var(--color-fondo)"
+          stroke="var(--color-neon)"
+          strokeWidth="2"
+        />
       ))}
       <text
         x={ancho}

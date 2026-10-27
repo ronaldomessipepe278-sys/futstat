@@ -9,6 +9,17 @@ npm install     # solo la primera vez
 npm run dev     # abre http://localhost:5173
 ```
 
+## Instalarla en el móvil
+
+- **iPhone (Safari):** botón Compartir → *Añadir a pantalla de inicio*.
+- **Android (Chrome):** menú ⋮ → *Instalar aplicación* (o *Añadir a pantalla de inicio*).
+
+## Ordenar el código
+
+```bash
+npm run formato   # deja el código bien ordenado (Prettier)
+```
+
 ## Dónde está cada cosa
 
 - `src/logic/valoracion.js` → **la fórmula** de la valoración (toca los números de `AJUSTES`)
@@ -17,6 +28,8 @@ npm run dev     # abre http://localhost:5173
 - `supabase/migrations/` → las tablas y reglas de seguridad de la base de datos
 - `CONFIGURAR-SUPABASE.md` → cómo conectar la web a Supabase
 - `src/components/Carta.jsx` → el dibujo de la carta
+- `src/components/CompartirCarta.jsx` → convertir la carta en imagen para compartir
+- `vite.config.js` → configuración de la PWA (nombre, iconos, colores)
 - `src/pantallas/` → cada pantalla (Mi carta, Apuntar partido, Crear carta, Privacidad)
 - `src/index.css` → colores y tipografías
 
@@ -24,4 +37,4 @@ npm run dev     # abre http://localhost:5173
 
 - [x] Fase 1: Mi carta (con resumen y evolución) + Apuntar partido + menú inferior (datos en el navegador)
 - [x] Fase 2: cuentas con código de acceso, base de datos (Supabase), grupos, ranking y cara a cara
-- [ ] Fase 3: PWA instalable, compartir carta como imagen, pulir diseño
+- [x] Fase 3: PWA instalable, compartir carta como imagen (1080x1350), aviso al guardar partido, versión de ordenador

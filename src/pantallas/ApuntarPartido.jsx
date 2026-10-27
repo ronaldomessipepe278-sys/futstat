@@ -60,9 +60,7 @@ export default function ApuntarPartido({ onGuardar, onCancelar }) {
               onClick={() => setNota(n)}
               aria-pressed={nota === n}
               className={`rounded-lg border py-3 font-titulo text-lg font-bold ${
-                nota === n
-                  ? 'border-neon bg-neon text-fondo'
-                  : 'border-borde bg-panel text-texto'
+                nota === n ? 'border-neon bg-neon text-fondo' : 'border-borde bg-panel text-texto'
               }`}
             >
               {n}
@@ -93,9 +91,7 @@ export default function ApuntarPartido({ onGuardar, onCancelar }) {
 }
 
 function Titulo({ children }) {
-  return (
-    <h2 className="font-titulo text-sm tracking-widest text-apagado uppercase">{children}</h2>
-  )
+  return <h2 className="font-titulo text-sm tracking-widest text-apagado uppercase">{children}</h2>
 }
 
 function Contador({ etiqueta, valor, onCambio }) {

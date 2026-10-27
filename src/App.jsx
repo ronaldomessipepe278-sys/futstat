@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Menu from './components/Menu.jsx'
 import { borrarDatos, cargarDatos, guardarDatos } from './logic/almacen.js'
 import * as nube from './logic/nube.js'
+import { cambioUltimoPartido } from './logic/valoracion.js'
 import ApuntarPartido from './pantallas/ApuntarPartido.jsx'
 import Bienvenida from './pantallas/Bienvenida.jsx'
 import Cuenta from './pantallas/Cuenta.jsx'
@@ -48,6 +49,8 @@ export default function App() {
   const [codigoNuevo, setCodigoNuevo] = useState(null)
   const [error, setError] = useState('')
   const [crearAbierto, setCrearAbierto] = useState(false)
+  const [aviso, setAviso] = useState(null)
+  const temporizadorAviso = useRef(null)
 
   useEffect(() => {
     const alCambiar = () => {
@@ -127,15 +130,29 @@ export default function App() {
 
   const apuntarPartido = (partido) =>
     intentar(async () => {
+      let nuevo
       if (nube.hayNube) {
-        const guardado = await nube.apuntarPartido(partido)
-        setDatos({ ...datos, partidos: [...datos.partidos, guardado] })
+        nuevo = await nube.apuntarPartido(partido)
+        setDatos({ ...datos, partidos: [...datos.partidos, nuevo] })
       } else {
-        const nuevo = { ...partido, id: crypto.randomUUID(), fecha: new Date().toISOString() }
+        nuevo = { ...partido, id: crypto.randomUUID(), fecha: new Date().toISOString() }
         actualizarLocal({ ...datos, partidos: [...datos.partidos, nuevo] })
       }
+      mostrarAviso(cambioUltimoPartido(datos.jugador.base, [...datos.partidos, nuevo]))
       irA('carta')
     })
+
+  function mostrarAviso(cambio) {
+    const texto =
+      cambio > 0
+        ? `¡Subes! +${cambio} de media ▲`
+        : cambio < 0
+          ? `Bajas ${cambio}. ¡El próximo lo petas! ▼`
+          : 'Partido guardado. Te mantienes ='
+    setAviso({ texto, tipo: cambio > 0 ? 'sube' : cambio < 0 ? 'baja' : 'igual' })
+    clearTimeout(temporizadorAviso.current)
+    temporizadorAviso.current = setTimeout(() => setAviso(null), 3500)
+  }
 
   const borrarPartido = (id) =>
     intentar(async () => {
@@ -245,28 +262,46 @@ export default function App() {
     )
   }
 
-  // El menú de abajo se ve cuando ya tienes carta
+  // El menú se ve cuando ya tienes carta (abajo en el móvil, arriba en el ordenador)
   const hayMenu = Boolean(datos?.jugador) && !codigoNuevo
+  // "Mi carta" y "Mi grupo" aprovechan el ancho del ordenador; el resto, columna estrecha
+  const ancha = hayMenu && (pantalla === 'carta' || pantalla === 'grupo')
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-[env(safe-area-inset-top)] lg:max-w-5xl">
       <header className="flex items-center justify-between py-4">
         <button onClick={() => irA('carta')} className="font-titulo text-2xl font-bold">
           Fut<span className="text-neon">Stat</span>
         </button>
+        {hayMenu && <Menu pantalla={pantalla} onIr={irA} arriba />}
       </header>
 
       {error && (
-        <p className="mb-4 rounded-xl border border-baja/50 bg-baja/10 p-3 text-sm text-baja">
+        <p className="mx-auto mb-4 w-full max-w-md rounded-xl border border-baja/50 bg-baja/10 p-3 text-sm text-baja">
           {error}
         </p>
       )}
 
-      <main className="flex-1 pb-8">{contenido}</main>
+      <main className={`w-full flex-1 pb-8 ${ancha ? '' : 'mx-auto max-w-md'}`}>{contenido}</main>
+
+      {aviso && (
+        <div
+          role="status"
+          className={`aviso-entra fixed bottom-24 left-1/2 z-20 rounded-full border px-5 py-3 font-titulo font-bold whitespace-nowrap shadow-lg backdrop-blur lg:bottom-8 ${
+            aviso.tipo === 'sube'
+              ? 'border-sube/60 bg-panel text-sube'
+              : aviso.tipo === 'baja'
+                ? 'border-baja/60 bg-panel text-baja'
+                : 'border-neon/60 bg-panel text-neon'
+          }`}
+        >
+          {aviso.texto}
+        </div>
+      )}
 
       <footer
         className={`border-t border-borde pt-4 text-center text-xs text-apagado ${
-          hayMenu ? 'pb-28' : 'pb-4'
+          hayMenu ? 'pb-28 lg:pb-6' : 'pb-4'
         }`}
       >
         <a href="#privacidad" className="underline">

@@ -60,15 +60,13 @@ export default function CrearCarta({ jugador, nueva, onGuardar, onCancelar }) {
           <span className="font-titulo text-sm tracking-widest text-apagado uppercase">
             Tus atributos
           </span>
-          <span
-            className={`font-titulo text-sm ${restantes > 0 ? 'text-neon' : 'text-apagado'}`}
-          >
+          <span className={`font-titulo text-sm ${restantes > 0 ? 'text-neon' : 'text-apagado'}`}>
             Puntos libres: {restantes}
           </span>
         </div>
         <p className="mt-1 text-xs text-apagado">
-          Reparte {AJUSTES.puntosParaRepartir} puntos. Para subir uno, baja otro. Luego tus
-          partidos los irán moviendo.
+          Reparte {AJUSTES.puntosParaRepartir} puntos. Para subir uno, baja otro. Luego tus partidos
+          los irán moviendo.
         </p>
 
         <ul className="mt-4 space-y-4">

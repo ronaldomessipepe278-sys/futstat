@@ -31,7 +31,10 @@ body {
     radial-gradient(circle at 50% -10%, rgb(34 229 240 / 0.12), transparent 55%),
     linear-gradient(rgb(34 229 240 / 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgb(34 229 240 / 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
   background-attachment: fixed;
   min-height: 100dvh;
 }
@@ -55,8 +58,48 @@ body {
   animation: brillo 3.5s ease-in-out infinite;
 }
 
+.brillo-fijo {
+  filter: drop-shadow(0 0 14px rgb(34 229 240 / 0.6));
+}
+
+/* La carta entra con un pequeño giro, como al sacar un sobre */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: perspective(800px) rotateY(-25deg) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.aparecer {
+  animation:
+    aparecer 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    brillo 3.5s ease-in-out 0.6s infinite;
+}
+
+/* Aviso que sube desde abajo (por ejemplo, al guardar un partido) */
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.aviso-entra {
+  animation: subir 0.3s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .brillo-neon {
+  .brillo-neon,
+  .aparecer,
+  .aviso-entra {
     animation: none;
     filter: drop-shadow(0 0 14px rgb(34 229 240 / 0.6));
   }
