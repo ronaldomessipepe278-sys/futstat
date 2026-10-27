@@ -174,6 +174,17 @@ export async function salirDeGrupo(grupoId, jugadorId) {
   )
 }
 
+// ---------- VOTACIÓN MVP ----------
+export async function votosDelGrupo(grupoId, semanas) {
+  return comprobar(
+    await supabase.from('votos').select('*').eq('grupo_id', grupoId).in('semana', semanas),
+  )
+}
+
+export async function votar(grupoId, votadoId) {
+  comprobar(await supabase.rpc('votar', { p_grupo: grupoId, p_votado: votadoId }))
+}
+
 // Todos los jugadores del grupo, cada uno con sus partidos
 export async function cargarGrupo(grupoId) {
   const miembros = comprobar(

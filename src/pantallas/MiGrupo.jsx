@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Actividad from '../components/Actividad.jsx'
 import CaraACara from '../components/CaraACara.jsx'
+import Mvp from '../components/Mvp.jsx'
+import { claveSemana, ganadores, semanaPasada } from '../logic/mvp.js'
 import { insigniasConseguidas } from '../logic/insignias.js'
 import * as nube from '../logic/nube.js'
 import {
@@ -261,8 +263,22 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
   )
   const [comparar, setComparar] = useState(null)
   const [pestana, setPestana] = useState('ranking')
+  const [votos, setVotos] = useState([])
+
+  // Votos del MVP de esta semana y la anterior
+  const cargarVotos = useCallback(
+    () => nube.votosDelGrupo(grupo.id, [claveSemana(), semanaPasada()]).then(setVotos),
+    [grupo.id],
+  )
+  useEffect(() => {
+    cargarVotos().catch(() => setVotos([]))
+  }, [cargarVotos])
 
   if (jugadores === null) return <Cargando />
+
+  const mvpPasados = new Set(ganadores(votos, semanaPasada()))
+  // Solo hay líder si el primero va por delante del segundo (no en empate)
+  const hayLider = ranking.length > 1 && ranking[0].valoracion > ranking[1].valoracion
 
   // Por defecto: yo contra el mejor del grupo que no sea yo
   const rival = ranking.find((j) => j.id !== yo.id)
@@ -272,7 +288,8 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
   const PESTANAS = [
     ['ranking', 'Ranking'],
     ['actividad', 'Actividad'],
-    ['cara', 'Cara a cara'],
+    ['mvp', 'MVP'],
+    ['cara', '1 vs 1'],
   ]
 
   return (
@@ -281,7 +298,7 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
 
       <div
         role="tablist"
-        className="grid grid-cols-3 gap-1 rounded-xl border border-borde bg-panel p-1"
+        className="grid grid-cols-4 gap-1 rounded-xl border border-borde bg-panel p-1"
       >
         {PESTANAS.map(([id, texto]) => (
           <button
@@ -326,18 +343,19 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
                   </span>
                   <span
                     className={`forma-carta flex h-12 w-10 items-center justify-center bg-gradient-to-b from-neon to-neon-suave font-titulo text-lg font-bold text-fondo ${
-                      i === 0 && ranking.length > 1 ? 'brillo-neon' : ''
+                      i === 0 && hayLider ? 'brillo-neon' : ''
                     }`}
                   >
                     {j.valoracion}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-titulo font-bold">
+                      {mvpPasados.has(j.id) && <span title="MVP de la semana pasada">👑 </span>}
                       {j.apodo}
                       {j.id === yo.id && <span className="text-neon"> (tú)</span>}
                     </span>
                     <span className="text-xs text-apagado">
-                      {i === 0 && ranking.length > 1 && <span className="text-neon">Líder · </span>}
+                      {i === 0 && hayLider && <span className="text-neon">Líder · </span>}
                       {nivel(j.valoracion)} · {j.partidos.length} partidos · 🏅 {j.insignias}
                     </span>
                   </span>
@@ -356,6 +374,18 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
       )}
 
       {pestana === 'actividad' && <Actividad jugadores={ranking} yo={yo} />}
+
+      {pestana === 'mvp' && (
+        <Mvp
+          jugadores={ranking}
+          yo={yo}
+          votos={votos}
+          onVotar={async (id) => {
+            await nube.votar(grupo.id, id)
+            await cargarVotos()
+          }}
+        />
+      )}
 
       {pestana === 'cara' &&
         (rival ? (

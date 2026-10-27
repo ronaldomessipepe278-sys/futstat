@@ -25,6 +25,7 @@ npm run formato   # deja el código bien ordenado (Prettier)
 - `src/logic/valoracion.js` → **la fórmula** de la valoración (toca los números de `AJUSTES`)
 - `src/logic/insignias.js` → **las insignias** (añade o cambia las condiciones aquí)
 - `src/logic/retos.js` → **los retos semanales**
+- `src/logic/mvp.js` → recuento de votos del MVP
 - `src/logic/almacen.js` → guardar/leer datos en el navegador (modo local)
 - `src/logic/nube.js` → cuentas, partidos y grupos en Supabase
 - `supabase/migrations/` → las tablas y reglas de seguridad de la base de datos
@@ -39,5 +40,6 @@ npm run formato   # deja el código bien ordenado (Prettier)
 
 - [x] Fase 1: Mi carta (con resumen y evolución) + Apuntar partido + menú inferior (datos en el navegador)
 - [x] Fase 2: cuentas con código de acceso, base de datos (Supabase), grupos, ranking y cara a cara
+- [x] Fase 5: votación «MVP de la semana» en cada grupo
 - [x] Fase 4: retos semanales, insignias y feed de actividad del grupo
 - [x] Fase 3: PWA instalable, compartir carta como imagen (1080x1350), aviso al guardar partido, versión de ordenador
