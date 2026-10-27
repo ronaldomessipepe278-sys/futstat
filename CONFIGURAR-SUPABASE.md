@@ -1,33 +1,22 @@
-# Conectar FutStat a Supabase (una sola vez, ~10 minutos)
+# Supabase en FutStat
 
-Sin esto la web funciona en "modo local" (sin cuentas ni grupos).
+## Estado: ✅ conectado
 
-## 1. Crear el proyecto
-1. Entra en https://supabase.com → **Start your project** → entra con GitHub.
-2. **New project**. Nombre: `futstat`. Pon una contraseña de base de datos (guárdala, aunque no la usaremos).
-3. **Region**: elige una de Europa (por ejemplo *West EU (Ireland)* o *Central EU (Frankfurt)*). Importante por privacidad.
-4. Espera 1-2 minutos a que se cree.
+- Proyecto: **futstat** (región París, `eu-west-3`, plan gratuito).
+- Tablas y reglas de seguridad: aplicadas (`supabase/migrations/`).
+- La web publicada se conecta sola gracias a `.env.production` (claves públicas).
+  No hace falta poner nada en Vercel.
 
-## 2. Crear las tablas
-1. Menú de la izquierda → **SQL Editor** → **New query**.
-2. Abre el archivo `supabase/migrations/20261027000000_futstat.sql` de este proyecto en GitHub, pulsa el botón de copiar y pégalo entero.
-3. Pulsa **Run**. Debe decir *Success. No rows returned*.
-
-## 3. Quitar la confirmación por correo
+## Ajuste obligatorio en el panel de Supabase
 FutStat no usa correos reales (cada jugador entra con su código), así que:
-1. Menú → **Authentication** → **Sign In / Providers** (o *Providers → Email*).
-2. Desactiva **Confirm email** y guarda.
+**Authentication → Sign In / Providers → Email → desactivar "Confirm email" → Save.**
 
-## 4. Copiar las claves
-1. Menú → **Project Settings** → **API** (o *Data API* / *API Keys*).
-2. Copia la **Project URL** y la clave **anon public** (también llamada *publishable*). Esta clave es pública: está pensada para ir dentro de la web, la seguridad la ponen las reglas de la base de datos.
-3. ⚠️ **Nunca** copies ni compartas la clave **service_role / secret**.
+Si está activado, al crear una carta saldrá el error
+"Supabase pide confirmar el correo".
 
-## 5. Ponerlas en Vercel
-1. Vercel → tu proyecto `futstat` → **Settings** → **Environment Variables**.
-2. Añade:
-   - `VITE_SUPABASE_URL` = la Project URL
-   - `VITE_SUPABASE_ANON_KEY` = la clave anon public
-3. **Deployments** → en el último, los tres puntos → **Redeploy**.
-
-¡Listo! Al abrir la web verás "Crear mi carta / Ya tengo carta". Si tenías partidos apuntados en ese móvil, se suben solos al crear la carta.
+## Si algún día creas otro proyecto
+1. Crea el proyecto en una región de Europa.
+2. SQL Editor → pega y ejecuta, en orden, los archivos de `supabase/migrations/`.
+3. Desactiva "Confirm email".
+4. Cambia la URL y la clave `anon` en `.env.production` (Project Settings → API).
+   ⚠️ Nunca uses la clave `service_role` / `secret`.
