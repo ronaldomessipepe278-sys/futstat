@@ -4,6 +4,8 @@
 //  Si quieres cambiar algo, toca solo los números de AJUSTES.
 // ============================================================
 
+import { nivelDe } from './niveles.js'
+
 export const AJUSTES = {
   // --- 1. Puntuación de un partido (de 1 a 99) ---
   puntosBase: 40, // punto de partida
@@ -113,10 +115,7 @@ export function cambioUltimoPartido(base, partidos) {
   return valoracionGeneral(base, partidos) - valoracionGeneral(base, partidos.slice(0, -1))
 }
 
-// Nombre del nivel de la carta según la valoración
+// Nombre del nivel de la carta según la valoración (los niveles están en niveles.js)
 export function nivel(valoracion) {
-  if (valoracion >= 85) return 'Leyenda'
-  if (valoracion >= 75) return 'Crack'
-  if (valoracion >= 60) return 'Titular'
-  return 'Cantera'
+  return nivelDe(valoracion).nombre
 }

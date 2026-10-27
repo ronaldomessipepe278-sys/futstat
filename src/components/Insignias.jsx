@@ -27,7 +27,7 @@ export default function Insignias({ conseguidas }) {
                 <span
                   className={`forma-carta flex h-14 w-12 items-center justify-center text-2xl ${
                     tiene
-                      ? 'bg-gradient-to-b from-neon/40 to-neon-suave/30 shadow-[0_0_14px_rgb(34_229_240/0.45)]'
+                      ? 'bg-gradient-to-b from-neon/40 to-neon-suave/30 shadow-[0_0_14px_color-mix(in_srgb,var(--color-neon)_45%,transparent)]'
                       : 'bg-borde/60 opacity-40 grayscale'
                   } ${elegida === i.id ? 'ring-2 ring-neon' : ''}`}
                 >

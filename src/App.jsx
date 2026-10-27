@@ -5,7 +5,9 @@ import * as nube from './logic/nube.js'
 import { insigniasConseguidas } from './logic/insignias.js'
 import { esNuevo, marcarVisto, ultimaVisita } from './logic/novedades.js'
 import { retosActuales } from './logic/retos.js'
-import { cambioUltimoPartido } from './logic/valoracion.js'
+import { rachaSemanas } from './logic/estadisticas.js'
+import { nivelDe } from './logic/niveles.js'
+import { cambioUltimoPartido, valoracionGeneral } from './logic/valoracion.js'
 import ApuntarPartido from './pantallas/ApuntarPartido.jsx'
 import Bienvenida from './pantallas/Bienvenida.jsx'
 import Cuenta from './pantallas/Cuenta.jsx'
@@ -186,10 +188,25 @@ export default function App() {
           ? `Bajas ${-cambio}. ¡El próximo lo petas! ▼`
           : 'Partido guardado. Te mantienes ='
 
+    const extras = []
+    // ¿Has cambiado de nivel?
+    const nivelAntes = nivelDe(valoracionGeneral(base, antes))
+    const nivelAhora = nivelDe(valoracionGeneral(base, despues))
+    if (nivelAhora.minimo > nivelAntes.minimo) extras.push(`⬆️ ¡Subes a ${nivelAhora.nombre}!`)
+    // ¿Primer partido de la semana? Entonces la racha crece
+    const racha = rachaSemanas(despues)
+    if (!rachaSemanas(antes).jugoEstaSemana && racha.jugoEstaSemana) {
+      extras.push(
+        `🔥 Racha: ${racha.semanas} ${racha.semanas === 1 ? 'semana' : 'semanas seguidas'}`,
+      )
+    }
+
     const yaTenia = new Set(insigniasConseguidas(base, antes).map((i) => i.id))
-    const extras = insigniasConseguidas(base, despues)
-      .filter((i) => !yaTenia.has(i.id))
-      .map((i) => `${i.icono} Nueva insignia: ${i.nombre}`)
+    extras.push(
+      ...insigniasConseguidas(base, despues)
+        .filter((i) => !yaTenia.has(i.id))
+        .map((i) => `${i.icono} Nueva insignia: ${i.nombre}`),
+    )
     const retosAntes = new Set(
       retosActuales(antes)
         .filter((r) => r.completado)
@@ -316,11 +333,21 @@ export default function App() {
   // El menú se ve cuando ya tienes carta (abajo en el móvil, arriba en el ordenador)
   const hayMenu = Boolean(datos?.jugador) && !codigoNuevo
   const avisos = { grupo: pantalla !== 'grupo' && esNuevo(novedad, visto) }
+  // Toda la web toma el color de tu nivel (Cantera verde, Crack violeta, Leyenda dorado...)
+  const miNivel = datos?.jugador
+    ? nivelDe(valoracionGeneral(datos.jugador.base, datos.partidos))
+    : null
+  const temaWeb = miNivel
+    ? { '--color-neon': miNivel.color, '--color-neon-suave': miNivel.color2 }
+    : undefined
   // "Mi carta" y "Mi grupo" aprovechan el ancho del ordenador; el resto, columna estrecha
   const ancha = hayMenu && (pantalla === 'carta' || pantalla === 'grupo')
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-[env(safe-area-inset-top)] lg:max-w-5xl">
+    <div
+      style={temaWeb}
+      className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pt-[env(safe-area-inset-top)] lg:max-w-5xl"
+    >
       <header className="flex items-center justify-between py-4">
         <button onClick={() => irA('carta')} className="font-titulo text-2xl font-bold">
           Fut<span className="text-neon">Stat</span>

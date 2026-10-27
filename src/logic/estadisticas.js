@@ -1,4 +1,5 @@
 // Cuentas sencillas para el resumen de "Mi carta".
+import { inicioSemana } from './retos.js'
 import { valoracionGeneral } from './valoracion.js'
 
 export function resumen(partidos) {
@@ -35,4 +36,21 @@ export function evolucion(base, partidos, maximo = 10) {
     puntos.push(valoracionGeneral(base, partidos.slice(0, i)))
   }
   return puntos.slice(-maximo)
+}
+
+// Racha de semanas: cuántas semanas seguidas (lunes a domingo) has jugado al menos un partido.
+// Si esta semana aún no has jugado, la racha sigue viva pero "en riesgo" hasta el domingo.
+export function rachaSemanas(partidos, ahora = new Date()) {
+  const semanasJugadas = new Set(partidos.map((p) => inicioSemana(new Date(p.fecha)).getTime()))
+  const estaSemana = inicioSemana(ahora)
+  const jugoEstaSemana = semanasJugadas.has(estaSemana.getTime())
+
+  const semana = new Date(estaSemana)
+  if (!jugoEstaSemana) semana.setDate(semana.getDate() - 7)
+  let semanas = 0
+  while (semanasJugadas.has(inicioSemana(semana).getTime())) {
+    semanas++
+    semana.setDate(semana.getDate() - 7)
+  }
+  return { semanas, jugoEstaSemana, enRiesgo: semanas > 0 && !jugoEstaSemana }
 }

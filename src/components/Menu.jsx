@@ -83,7 +83,9 @@ export default function Menu({ pantalla, onIr, arriba, avisos = {} }) {
               >
                 <span
                   className={`relative flex h-9 w-9 items-center justify-center rounded-xl ${
-                    o.destacado ? 'bg-neon text-fondo shadow-[0_0_16px_rgb(34_229_240/0.5)]' : ''
+                    o.destacado
+                      ? 'bg-neon text-fondo shadow-[0_0_16px_color-mix(in_srgb,var(--color-neon)_50%,transparent)]'
+                      : ''
                   }`}
                 >
                   <Icono>{o.icono}</Icono>

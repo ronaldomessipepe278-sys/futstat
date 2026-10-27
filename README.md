@@ -23,6 +23,7 @@ npm run formato   # deja el código bien ordenado (Prettier)
 ## Dónde está cada cosa
 
 - `src/logic/valoracion.js` → **la fórmula** de la valoración (toca los números de `AJUSTES`)
+- `src/logic/niveles.js` → **los niveles y sus colores** (Cantera, Titular, Crack, Leyenda)
 - `src/logic/insignias.js` → **las insignias** (añade o cambia las condiciones aquí)
 - `src/logic/retos.js` → **los retos semanales**
 - `src/logic/mvp.js` → recuento de votos del MVP
@@ -40,6 +41,7 @@ npm run formato   # deja el código bien ordenado (Prettier)
 
 - [x] Fase 1: Mi carta (con resumen y evolución) + Apuntar partido + menú inferior (datos en el navegador)
 - [x] Fase 2: cuentas con código de acceso, base de datos (Supabase), grupos, ranking y cara a cara
+- [x] Fase 7: colores por nivel (Cantera, Titular, Crack, Leyenda), racha de semanas y próximo objetivo
 - [x] Fase 6: avisos dentro de la web (punto rojo en «Mi grupo» y etiquetas «Nuevo»)
 - [x] Fase 5: votación «MVP de la semana» en cada grupo
 - [x] Fase 4: retos semanales, insignias y feed de actividad del grupo

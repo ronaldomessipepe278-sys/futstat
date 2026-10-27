@@ -4,7 +4,10 @@
 //  que tus partidos la cumplen. Para añadir una nueva, copia una
 //  de la lista y cambia el texto y la condición.
 // ============================================================
+import { NIVELES } from './niveles.js'
 import { valoracionGeneral } from './valoracion.js'
+
+const minimoDe = (id) => NIVELES.find((n) => n.id === id).minimo
 
 const suma = (partidos, campo) => partidos.reduce((total, p) => total + p[campo], 0)
 const ultimo = (partidos) => partidos.at(-1)
@@ -89,15 +92,15 @@ export const INSIGNIAS = [
     id: 'crack',
     nombre: 'Crack',
     icono: '⭐',
-    descripcion: 'Llega a 75 de valoración',
-    cumple: (partidos, base) => valoracionGeneral(base, partidos) >= 75,
+    descripcion: `Llega a ${minimoDe('crack')} de valoración (nivel Crack)`,
+    cumple: (partidos, base) => valoracionGeneral(base, partidos) >= minimoDe('crack'),
   },
   {
     id: 'leyenda',
     nombre: 'Leyenda',
     icono: '🏆',
-    descripcion: 'Llega a 85 de valoración',
-    cumple: (partidos, base) => valoracionGeneral(base, partidos) >= 85,
+    descripcion: `Llega a ${minimoDe('leyenda')} de valoración (nivel Leyenda)`,
+    cumple: (partidos, base) => valoracionGeneral(base, partidos) >= minimoDe('leyenda'),
   },
 ]
 

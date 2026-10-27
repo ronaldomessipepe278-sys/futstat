@@ -4,7 +4,9 @@ import CaraACara from '../components/CaraACara.jsx'
 import Mvp from '../components/Mvp.jsx'
 import { claveSemana, ganadores, semanaPasada } from '../logic/mvp.js'
 import { esNuevo } from '../logic/novedades.js'
+import { rachaSemanas } from '../logic/estadisticas.js'
 import { insigniasConseguidas } from '../logic/insignias.js'
+import { estiloNivel } from '../logic/niveles.js'
 import * as nube from '../logic/nube.js'
 import {
   atributosActuales,
@@ -260,6 +262,7 @@ function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
           cambio: cambioUltimoPartido(j.base, j.partidos),
           atributos: atributosActuales(j.base, j.partidos),
           insignias: insigniasConseguidas(j.base, j.partidos).length,
+          racha: rachaSemanas(j.partidos).semanas,
         }))
         .sort((x, y) => y.valoracion - x.valoracion || y.partidos.length - x.partidos.length),
     [jugadores],
@@ -328,6 +331,7 @@ function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
 
       {pestana === 'ranking' && (
         <section>
+          <ObjetivoGrupo ranking={ranking} yo={yo} />
           <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
             {ranking.length} {ranking.length === 1 ? 'jugador' : 'jugadores'} · toca a alguien para
             compararte
@@ -353,7 +357,8 @@ function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
                     {i + 1}
                   </span>
                   <span
-                    className={`forma-carta flex h-12 w-10 items-center justify-center bg-gradient-to-b from-neon to-neon-suave font-titulo text-lg font-bold text-fondo ${
+                    style={estiloNivel(j.valoracion)}
+                    className={`forma-carta flex h-12 w-10 items-center justify-center bg-[linear-gradient(180deg,var(--acento),var(--acento-2))] font-titulo text-lg font-bold text-fondo ${
                       i === 0 && hayLider ? 'brillo-neon' : ''
                     }`}
                   >
@@ -368,6 +373,7 @@ function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
                     <span className="text-xs text-apagado">
                       {i === 0 && hayLider && <span className="text-neon">Líder · </span>}
                       {nivel(j.valoracion)} · {j.partidos.length} partidos · 🏅 {j.insignias}
+                      {j.racha > 0 && ` · 🔥 ${j.racha}`}
                     </span>
                   </span>
                   {j.cambio !== 0 && (
@@ -423,6 +429,49 @@ function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
         Salir de este grupo
       </button>
     </div>
+  )
+}
+
+// "Te faltan X puntos para adelantar a Beto": el rival que tienes justo delante
+function ObjetivoGrupo({ ranking, yo }) {
+  const puesto = ranking.findIndex((j) => j.id === yo.id)
+  if (puesto === -1 || ranking.length < 2) return null
+  const mio = ranking[puesto]
+
+  let texto
+  if (puesto === 0) {
+    const segundo = ranking[1]
+    const ventaja = mio.valoracion - segundo.valoracion
+    texto =
+      ventaja === 0 ? (
+        <>
+          Empatas en cabeza con <strong>{segundo.apodo}</strong>. ¡Un buen partido y te quedas solo
+          arriba!
+        </>
+      ) : (
+        <>
+          👑 Vas primero. <strong>{segundo.apodo}</strong> está a{' '}
+          <strong className="text-neon">{ventaja}</strong> {ventaja === 1 ? 'punto' : 'puntos'}.
+        </>
+      )
+  } else {
+    const delante = ranking[puesto - 1]
+    const faltan = delante.valoracion - mio.valoracion + 1
+    texto = (
+      <>
+        🎯 Te {faltan === 1 ? 'falta' : 'faltan'}{' '}
+        <strong className="text-neon">
+          {faltan} {faltan === 1 ? 'punto' : 'puntos'}
+        </strong>{' '}
+        para adelantar a <strong>{delante.apodo}</strong> y subir al {puesto}º puesto
+      </>
+    )
+  }
+
+  return (
+    <p className="mb-4 rounded-2xl border border-neon/40 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--color-neon)_12%,transparent),rgb(168_85_247/0.1))] p-4 text-sm">
+      {texto}
+    </p>
   )
 }
 

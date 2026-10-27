@@ -1,6 +1,7 @@
 import { toBlob } from 'html-to-image'
 import { useRef, useState } from 'react'
 import Carta from './Carta.jsx'
+import { estiloNivel } from '../logic/niveles.js'
 
 // Botón que convierte la carta en una imagen (1080x1350, formato Instagram)
 // y abre el menú de compartir del móvil. Si no se puede, la descarga.
@@ -68,13 +69,14 @@ export default function CompartirCarta(props) {
           ref={marco}
           className="flex h-[450px] w-[360px] flex-col items-center justify-between bg-fondo px-8 py-6"
           style={{
+            ...estiloNivel(props.valoracion),
             backgroundImage:
-              'radial-gradient(circle at 50% 35%, rgb(34 229 240 / 0.22), transparent 60%), linear-gradient(rgb(34 229 240 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(34 229 240 / 0.05) 1px, transparent 1px)',
-            backgroundSize: '100% 100%, 24px 24px, 24px 24px',
+              'radial-gradient(circle at 50% 38%, var(--brillo), transparent 62%), radial-gradient(circle at 100% 0%, rgb(168 85 247 / 0.25), transparent 50%), linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px)',
+            backgroundSize: '100% 100%, 100% 100%, 24px 24px, 24px 24px',
           }}
         >
           <div className="font-titulo text-xl font-bold text-texto">
-            Fut<span className="text-neon">Stat</span>
+            Fut<span className="text-[var(--acento)]">Stat</span>
           </div>
           {/* La carta se dibuja a su tamaño normal y se encoge para que quepa */}
           <div className="h-[344px] w-[218px]">

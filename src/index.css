@@ -6,13 +6,15 @@
 
 /* Colores y tipografías de FutStat: cambia aquí y cambia en toda la web */
 @theme {
-  --color-fondo: #05080f;
-  --color-panel: #0c1322;
-  --color-borde: #1c2a44;
+  --color-fondo: #070b1a;
+  --color-panel: #101a33;
+  --color-borde: #24365c;
   --color-neon: #22e5f0;
   --color-neon-suave: #0e7c8a;
-  --color-texto: #e6f6ff;
-  --color-apagado: #7d8fa9;
+  --color-violeta: #a855f7;
+  --color-rosa: #ec4899;
+  --color-texto: #eef8ff;
+  --color-apagado: #8fa2c2;
   --color-sube: #3dffa2;
   --color-baja: #ff4d6d;
   --font-titulo: 'Chakra Petch', system-ui, sans-serif;
@@ -26,12 +28,17 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Fondo con manchas de luz de colores (cian, violeta y rosa) y una rejilla suave */
 body {
   background-image:
-    radial-gradient(circle at 50% -10%, rgb(34 229 240 / 0.12), transparent 55%),
-    linear-gradient(rgb(34 229 240 / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(34 229 240 / 0.04) 1px, transparent 1px);
+    radial-gradient(ellipse 60% 45% at 15% 0%, rgb(34 229 240 / 0.22), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 100% 30%, rgb(168 85 247 / 0.2), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgb(236 72 153 / 0.14), transparent 70%),
+    linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
   background-size:
+    100% 100%,
+    100% 100%,
     100% 100%,
     32px 32px,
     32px 32px;
@@ -44,13 +51,14 @@ body {
   clip-path: polygon(14% 0, 86% 0, 100% 8%, 100% 92%, 86% 100%, 14% 100%, 0 92%, 0 8%);
 }
 
+/* El brillo usa el color del nivel de la carta (--brillo); si no hay, cian */
 @keyframes brillo {
   0%,
   100% {
-    filter: drop-shadow(0 0 10px rgb(34 229 240 / 0.45));
+    filter: drop-shadow(0 0 10px var(--brillo, rgb(34 229 240 / 0.5)));
   }
   50% {
-    filter: drop-shadow(0 0 22px rgb(34 229 240 / 0.8));
+    filter: drop-shadow(0 0 26px var(--brillo, rgb(34 229 240 / 0.8)));
   }
 }
 
@@ -59,7 +67,48 @@ body {
 }
 
 .brillo-fijo {
-  filter: drop-shadow(0 0 14px rgb(34 229 240 / 0.6));
+  filter: drop-shadow(0 0 16px var(--brillo, rgb(34 229 240 / 0.6)));
+}
+
+/* Borde dorado que se mueve, solo para las Leyendas */
+@keyframes holograma {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.holografico {
+  background-image: linear-gradient(
+    110deg,
+    #f59e0b,
+    #fde68a,
+    #fff7d6,
+    #f472b6,
+    #fde68a,
+    #f59e0b
+  ) !important;
+  background-size: 200% 100%;
+  animation: holograma 4s linear infinite;
+}
+
+/* Destello de luz que cruza la carta cada pocos segundos */
+@keyframes destello {
+  0%,
+  70% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-20deg);
+  }
+}
+
+.destello {
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.13), transparent);
+  animation: destello 5s ease-in-out infinite;
 }
 
 /* La carta entra con un pequeño giro, como al sacar un sobre */
@@ -99,9 +148,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .brillo-neon,
   .aparecer,
-  .aviso-entra {
+  .aviso-entra,
+  .holografico,
+  .destello {
     animation: none;
-    filter: drop-shadow(0 0 14px rgb(34 229 240 / 0.6));
+  }
+  .brillo-neon,
+  .aparecer {
+    filter: drop-shadow(0 0 16px var(--brillo, rgb(34 229 240 / 0.6)));
   }
 }
 

@@ -3,8 +3,9 @@ import Carta from '../components/Carta.jsx'
 import CompartirCarta from '../components/CompartirCarta.jsx'
 import Evolucion from '../components/Evolucion.jsx'
 import Insignias from '../components/Insignias.jsx'
+import Objetivos from '../components/Objetivos.jsx'
 import Retos from '../components/Retos.jsx'
-import { evolucion, resumen } from '../logic/estadisticas.js'
+import { evolucion, rachaSemanas, resumen } from '../logic/estadisticas.js'
 import { insigniasConseguidas } from '../logic/insignias.js'
 import {
   atributosActuales,
@@ -36,6 +37,7 @@ export default function MiCarta({
     atributos: atributosActuales(jugador.base, partidos),
     cambio: cambioUltimoPartido(jugador.base, partidos),
     partidosJugados: partidos.length,
+    racha: rachaSemanas(partidos).semanas,
   }
 
   return (
@@ -46,7 +48,7 @@ export default function MiCarta({
 
         <button
           onClick={onApuntar}
-          className="mt-4 w-full rounded-xl bg-neon py-4 font-titulo text-xl font-bold text-fondo shadow-[0_0_24px_rgb(34_229_240/0.4)] active:scale-[0.98]"
+          className="mt-4 w-full rounded-xl bg-neon py-4 font-titulo text-xl font-bold text-fondo shadow-[0_0_24px_color-mix(in_srgb,var(--color-neon)_40%,transparent)] active:scale-[0.98]"
         >
           + Apuntar partido
         </button>
@@ -54,6 +56,10 @@ export default function MiCarta({
       </div>
 
       <div className="space-y-8">
+        <Seccion titulo="Próximo objetivo">
+          <Objetivos base={jugador.base} partidos={partidos} />
+        </Seccion>
+
         <Seccion titulo="Retos de la semana">
           <Retos partidos={partidos} />
         </Seccion>

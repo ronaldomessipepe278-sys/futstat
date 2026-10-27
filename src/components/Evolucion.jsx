@@ -23,7 +23,10 @@ export default function Evolucion({ puntos }) {
       role="img"
       aria-label={`Valoración: de ${puntos[0]} a ${puntos.at(-1)}`}
     >
-      <polygon points={`0,${alto} ${linea} ${ancho},${alto}`} fill="rgb(34 229 240 / 0.12)" />
+      <polygon
+        points={`0,${alto} ${linea} ${ancho},${alto}`}
+        style={{ fill: 'color-mix(in srgb, var(--color-neon) 15%, transparent)' }}
+      />
       <polyline
         points={linea}
         fill="none"

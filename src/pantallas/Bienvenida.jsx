@@ -40,7 +40,7 @@ export default function Bienvenida({ invitado, onCrear, onEntrar }) {
         <div className="space-y-3">
           <button
             onClick={onCrear}
-            className="w-full rounded-xl bg-neon py-4 font-titulo text-xl font-bold text-fondo shadow-[0_0_24px_rgb(34_229_240/0.4)]"
+            className="w-full rounded-xl bg-neon py-4 font-titulo text-xl font-bold text-fondo shadow-[0_0_24px_color-mix(in_srgb,var(--color-neon)_40%,transparent)]"
           >
             Crear mi carta
           </button>
