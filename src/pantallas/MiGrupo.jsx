@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Actividad from '../components/Actividad.jsx'
 import CaraACara from '../components/CaraACara.jsx'
+import { insigniasConseguidas } from '../logic/insignias.js'
 import * as nube from '../logic/nube.js'
 import {
   atributosActuales,
@@ -252,11 +254,13 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
           valoracion: valoracionGeneral(j.base, j.partidos),
           cambio: cambioUltimoPartido(j.base, j.partidos),
           atributos: atributosActuales(j.base, j.partidos),
+          insignias: insigniasConseguidas(j.base, j.partidos).length,
         }))
         .sort((x, y) => y.valoracion - x.valoracion || y.partidos.length - x.partidos.length),
     [jugadores],
   )
   const [comparar, setComparar] = useState(null)
+  const [pestana, setPestana] = useState('ranking')
 
   if (jugadores === null) return <Cargando />
 
@@ -265,15 +269,40 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
   const izquierda = comparar?.[0] ?? yo.id
   const derecha = comparar?.[1] ?? rival?.id
 
+  const PESTANAS = [
+    ['ranking', 'Ranking'],
+    ['actividad', 'Actividad'],
+    ['cara', 'Cara a cara'],
+  ]
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <Invitar grupo={grupo} />
 
-      {/* En ordenador: ranking y cara a cara uno al lado del otro */}
-      <div className="space-y-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0">
+      <div
+        role="tablist"
+        className="grid grid-cols-3 gap-1 rounded-xl border border-borde bg-panel p-1"
+      >
+        {PESTANAS.map(([id, texto]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={pestana === id}
+            onClick={() => setPestana(id)}
+            className={`rounded-lg py-2 font-titulo text-sm font-bold ${
+              pestana === id ? 'bg-neon text-fondo' : 'text-apagado'
+            }`}
+          >
+            {texto}
+          </button>
+        ))}
+      </div>
+
+      {pestana === 'ranking' && (
         <section>
           <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
-            Ranking · {ranking.length} {ranking.length === 1 ? 'jugador' : 'jugadores'}
+            {ranking.length} {ranking.length === 1 ? 'jugador' : 'jugadores'} · toca a alguien para
+            compararte
           </h2>
           <ol className="space-y-2">
             {ranking.map((j, i) => (
@@ -282,7 +311,7 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
                   onClick={() => {
                     if (j.id === yo.id) return
                     setComparar([yo.id, j.id])
-                    document.getElementById('cara-a-cara')?.scrollIntoView({ behavior: 'smooth' })
+                    setPestana('cara')
                   }}
                   className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left ${
                     j.id === yo.id ? 'border-neon/60 bg-neon/5' : 'border-borde bg-panel'
@@ -309,7 +338,7 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
                     </span>
                     <span className="text-xs text-apagado">
                       {i === 0 && ranking.length > 1 && <span className="text-neon">Líder · </span>}
-                      {nivel(j.valoracion)} · {j.partidos.length} partidos
+                      {nivel(j.valoracion)} · {j.partidos.length} partidos · 🏅 {j.insignias}
                     </span>
                   </span>
                   {j.cambio !== 0 && (
@@ -324,25 +353,23 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
             ))}
           </ol>
         </section>
+      )}
 
-        <section id="cara-a-cara" className="scroll-mt-4">
-          <h2 className="mb-2 font-titulo text-sm tracking-widest text-apagado uppercase">
-            Cara a cara
-          </h2>
-          {rival ? (
-            <CaraACara
-              jugadores={ranking}
-              izquierda={izquierda}
-              derecha={derecha}
-              onCambiar={(a, b) => setComparar([a, b])}
-            />
-          ) : (
-            <p className="text-sm text-apagado">
-              Invita a alguien al grupo para poder compararte cara a cara.
-            </p>
-          )}
-        </section>
-      </div>
+      {pestana === 'actividad' && <Actividad jugadores={ranking} yo={yo} />}
+
+      {pestana === 'cara' &&
+        (rival ? (
+          <CaraACara
+            jugadores={ranking}
+            izquierda={izquierda}
+            derecha={derecha}
+            onCambiar={(a, b) => setComparar([a, b])}
+          />
+        ) : (
+          <p className="text-sm text-apagado">
+            Invita a alguien al grupo para poder compararte cara a cara.
+          </p>
+        ))}
 
       <button
         onClick={() => {

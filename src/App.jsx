@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Menu from './components/Menu.jsx'
 import { borrarDatos, cargarDatos, guardarDatos } from './logic/almacen.js'
 import * as nube from './logic/nube.js'
+import { insigniasConseguidas } from './logic/insignias.js'
+import { retosActuales } from './logic/retos.js'
 import { cambioUltimoPartido } from './logic/valoracion.js'
 import ApuntarPartido from './pantallas/ApuntarPartido.jsx'
 import Bienvenida from './pantallas/Bienvenida.jsx'
@@ -138,20 +140,36 @@ export default function App() {
         nuevo = { ...partido, id: crypto.randomUUID(), fecha: new Date().toISOString() }
         actualizarLocal({ ...datos, partidos: [...datos.partidos, nuevo] })
       }
-      mostrarAviso(cambioUltimoPartido(datos.jugador.base, [...datos.partidos, nuevo]))
+      mostrarAviso(datos.jugador.base, datos.partidos, [...datos.partidos, nuevo])
       irA('carta')
     })
 
-  function mostrarAviso(cambio) {
+  // Aviso tras guardar un partido: cuánto subes y si has ganado insignias o retos
+  function mostrarAviso(base, antes, despues) {
+    const cambio = cambioUltimoPartido(base, despues)
     const texto =
       cambio > 0
         ? `¡Subes! +${cambio} de media ▲`
         : cambio < 0
-          ? `Bajas ${cambio}. ¡El próximo lo petas! ▼`
+          ? `Bajas ${-cambio}. ¡El próximo lo petas! ▼`
           : 'Partido guardado. Te mantienes ='
-    setAviso({ texto, tipo: cambio > 0 ? 'sube' : cambio < 0 ? 'baja' : 'igual' })
+
+    const yaTenia = new Set(insigniasConseguidas(base, antes).map((i) => i.id))
+    const extras = insigniasConseguidas(base, despues)
+      .filter((i) => !yaTenia.has(i.id))
+      .map((i) => `${i.icono} Nueva insignia: ${i.nombre}`)
+    const retosAntes = new Set(
+      retosActuales(antes)
+        .filter((r) => r.completado)
+        .map((r) => r.id),
+    )
+    for (const reto of retosActuales(despues)) {
+      if (reto.completado && !retosAntes.has(reto.id)) extras.push(`✓ Reto: ${reto.texto}`)
+    }
+
+    setAviso({ texto, extras, tipo: cambio > 0 ? 'sube' : cambio < 0 ? 'baja' : 'igual' })
     clearTimeout(temporizadorAviso.current)
-    temporizadorAviso.current = setTimeout(() => setAviso(null), 3500)
+    temporizadorAviso.current = setTimeout(() => setAviso(null), extras.length ? 5000 : 3500)
   }
 
   const borrarPartido = (id) =>
@@ -287,7 +305,7 @@ export default function App() {
       {aviso && (
         <div
           role="status"
-          className={`aviso-entra fixed bottom-24 left-1/2 z-20 rounded-full border px-5 py-3 font-titulo font-bold whitespace-nowrap shadow-lg backdrop-blur lg:bottom-8 ${
+          className={`aviso-entra fixed bottom-24 left-1/2 z-20 rounded-2xl border px-5 py-3 text-center font-titulo font-bold whitespace-nowrap shadow-lg backdrop-blur lg:bottom-8 ${
             aviso.tipo === 'sube'
               ? 'border-sube/60 bg-panel text-sube'
               : aviso.tipo === 'baja'
@@ -296,6 +314,11 @@ export default function App() {
           }`}
         >
           {aviso.texto}
+          {aviso.extras.map((extra) => (
+            <span key={extra} className="block text-sm text-texto">
+              {extra}
+            </span>
+          ))}
         </div>
       )}
 

@@ -2,7 +2,10 @@ import { useState } from 'react'
 import Carta from '../components/Carta.jsx'
 import CompartirCarta from '../components/CompartirCarta.jsx'
 import Evolucion from '../components/Evolucion.jsx'
+import Insignias from '../components/Insignias.jsx'
+import Retos from '../components/Retos.jsx'
 import { evolucion, resumen } from '../logic/estadisticas.js'
+import { insigniasConseguidas } from '../logic/insignias.js'
 import {
   atributosActuales,
   cambioUltimoPartido,
@@ -51,6 +54,10 @@ export default function MiCarta({
       </div>
 
       <div className="space-y-8">
+        <Seccion titulo="Retos de la semana">
+          <Retos partidos={partidos} />
+        </Seccion>
+
         <Seccion titulo="Resumen">
           <div className="grid grid-cols-3 gap-2">
             <Dato valor={datos.partidos} texto="Partidos" />
@@ -70,6 +77,10 @@ export default function MiCarta({
           <div className="rounded-xl border border-borde bg-panel p-4">
             <Evolucion puntos={evolucion(jugador.base, partidos)} />
           </div>
+        </Seccion>
+
+        <Seccion titulo="Insignias">
+          <Insignias conseguidas={insigniasConseguidas(jugador.base, partidos)} />
         </Seccion>
 
         <Seccion titulo="Mis partidos">
