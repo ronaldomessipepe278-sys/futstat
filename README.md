@@ -19,6 +19,6 @@ npm run dev     # abre http://localhost:5173
 
 ## Estado
 
-- [x] Fase 1: Mi carta + Apuntar partido (datos en el navegador)
+- [x] Fase 1: Mi carta (con resumen y evolución) + Apuntar partido + menú inferior (datos en el navegador)
 - [ ] Fase 2: cuentas, base de datos (Supabase) y grupos con ranking
 - [ ] Fase 3: PWA instalable, compartir carta como imagen, pulir diseño

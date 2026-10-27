@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { borrarDatos, cargarDatos, guardarDatos } from './logic/almacen.js'
+import Menu from './components/Menu.jsx'
 import ApuntarPartido from './pantallas/ApuntarPartido.jsx'
 import CrearCarta from './pantallas/CrearCarta.jsx'
 import MiCarta from './pantallas/MiCarta.jsx'
+import MiGrupo from './pantallas/MiGrupo.jsx'
 import Privacidad from './pantallas/Privacidad.jsx'
 
 // La pantalla actual se guarda en la dirección (#apuntar, #privacidad...).
@@ -53,6 +55,8 @@ export default function App() {
     )
   } else if (!datos.jugador) {
     contenido = <CrearCarta onGuardar={(jugador) => actualizar({ ...datos, jugador })} />
+  } else if (pantalla === 'grupo') {
+    contenido = <MiGrupo />
   } else if (pantalla === 'apuntar') {
     contenido = <ApuntarPartido onGuardar={guardarPartido} onCancelar={() => irA('carta')} />
   } else if (pantalla === 'editar') {
@@ -80,6 +84,9 @@ export default function App() {
     )
   }
 
+  // El menú de abajo se ve en todo menos al crear la carta por primera vez
+  const hayMenu = Boolean(datos.jugador)
+
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4">
       <header className="flex items-center justify-between py-4">
@@ -90,12 +97,18 @@ export default function App() {
 
       <main className="flex-1 pb-8">{contenido}</main>
 
-      <footer className="border-t border-borde py-4 text-center text-xs text-apagado">
+      <footer
+        className={`border-t border-borde pt-4 text-center text-xs text-apagado ${
+          hayMenu ? 'pb-28' : 'pb-4'
+        }`}
+      >
         <a href="#privacidad" className="underline">
           Privacidad
         </a>
         <span> · FutStat no tiene relación con EA Sports, FIFA ni ningún club.</span>
       </footer>
+
+      {hayMenu && <Menu pantalla={pantalla} onIr={irA} />}
     </div>
   )
 }
