@@ -12,7 +12,15 @@ import {
 const TEXTO_RESULTADO = { ganado: 'Victoria', empatado: 'Empate', perdido: 'Derrota' }
 const COLOR_RESULTADO = { ganado: 'bg-sube', empatado: 'bg-neon', perdido: 'bg-baja' }
 
-export default function MiCarta({ jugador, partidos, onApuntar, onEditar, onBorrarPartido }) {
+export default function MiCarta({
+  jugador,
+  partidos,
+  hayNube,
+  onApuntar,
+  onEditar,
+  onCuenta,
+  onBorrarPartido,
+}) {
   const [verTodos, setVerTodos] = useState(false)
   const datos = resumen(partidos)
   const historial = [...partidos].reverse()
@@ -108,9 +116,16 @@ export default function MiCarta({ jugador, partidos, onApuntar, onEditar, onBorr
         )}
       </Seccion>
 
-      <button onClick={onEditar} className="w-full py-2 text-sm text-apagado underline">
-        Editar apodo y atributos
-      </button>
+      <div className="flex justify-center gap-6 text-sm text-apagado">
+        <button onClick={onEditar} className="py-2 underline">
+          Editar apodo y atributos
+        </button>
+        {hayNube && (
+          <button onClick={onCuenta} className="py-2 underline">
+            Mi código de acceso
+          </button>
+        )}
+      </div>
     </div>
   )
 }

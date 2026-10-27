@@ -4,8 +4,11 @@ import { AJUSTES, ATRIBUTOS } from '../logic/valoracion.js'
 const MEDIA_INICIAL = AJUSTES.puntosParaRepartir / ATRIBUTOS.length
 
 // Sirve para crear la carta y también para editarla (si llega `jugador`).
-export default function CrearCarta({ jugador, onGuardar, onCancelar }) {
+// `nueva` = es una carta nueva aunque venga rellena (datos de la versión sin cuentas).
+export default function CrearCarta({ jugador, nueva, onGuardar, onCancelar }) {
+  const editando = Boolean(jugador) && !nueva
   const [apodo, setApodo] = useState(jugador?.apodo ?? '')
+  const [enviando, setEnviando] = useState(false)
   const [base, setBase] = useState(
     jugador?.base ?? Object.fromEntries(ATRIBUTOS.map(({ clave }) => [clave, MEDIA_INICIAL])),
   )
@@ -21,16 +24,19 @@ export default function CrearCarta({ jugador, onGuardar, onCancelar }) {
     setBase({ ...base, [clave]: Math.min(valor, maximo) })
   }
 
-  function guardar(evento) {
+  async function guardar(evento) {
     evento.preventDefault()
-    if (apodoValido) onGuardar({ apodo: apodoLimpio, base })
+    if (!apodoValido || enviando) return
+    setEnviando(true)
+    await onGuardar({ apodo: apodoLimpio, base })
+    setEnviando(false)
   }
 
   return (
     <form onSubmit={guardar} className="space-y-6">
       <div>
         <h1 className="font-titulo text-2xl font-bold">
-          {jugador ? 'Editar mi carta' : 'Crea tu carta'}
+          {editando ? 'Editar mi carta' : 'Crea tu carta'}
         </h1>
         <p className="mt-1 text-sm text-apagado">
           Solo necesitamos un apodo. No pongas tu nombre real.
@@ -98,10 +104,10 @@ export default function CrearCarta({ jugador, onGuardar, onCancelar }) {
         )}
         <button
           type="submit"
-          disabled={!apodoValido}
+          disabled={!apodoValido || enviando}
           className="flex-[2] rounded-xl bg-neon py-4 font-titulo text-lg font-bold text-fondo disabled:opacity-40"
         >
-          {jugador ? 'Guardar cambios' : 'Crear mi carta'}
+          {enviando ? 'Guardando…' : editando ? 'Guardar cambios' : 'Crear mi carta'}
         </button>
       </div>
     </form>
