@@ -185,6 +185,25 @@ export async function votar(grupoId, votadoId) {
   comprobar(await supabase.rpc('votar', { p_grupo: grupoId, p_votado: votadoId }))
 }
 
+// ---------- NOVEDADES ----------
+// Fecha de lo último que ha pasado en tus grupos (sin contar lo tuyo):
+// un partido de un colega, alguien que se une o un voto para ti.
+export async function ultimaNovedad(yoId) {
+  const masReciente = (tabla, campo, filtro) =>
+    filtro(supabase.from(tabla).select(campo))
+      .order(campo, { ascending: false })
+      .limit(1)
+      .then(comprobar)
+      .then((filas) => filas[0]?.[campo] ?? null)
+
+  const fechas = await Promise.all([
+    masReciente('partidos', 'fecha', (q) => q.neq('jugador_id', yoId)),
+    masReciente('miembros', 'unido_en', (q) => q.neq('jugador_id', yoId)),
+    masReciente('votos', 'creado_en', (q) => q.eq('votado_id', yoId)),
+  ])
+  return fechas.filter(Boolean).sort().at(-1) ?? null
+}
+
 // Todos los jugadores del grupo, cada uno con sus partidos
 export async function cargarGrupo(grupoId) {
   const miembros = comprobar(

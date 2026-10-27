@@ -33,7 +33,16 @@ function Icono({ children }) {
   )
 }
 
-export default function Menu({ pantalla, onIr, arriba }) {
+// Punto rojo de "hay novedades"
+function Punto() {
+  return (
+    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-fondo bg-baja">
+      <span className="sr-only">Hay novedades</span>
+    </span>
+  )
+}
+
+export default function Menu({ pantalla, onIr, arriba, avisos = {} }) {
   if (arriba) {
     return (
       <nav className="hidden gap-2 lg:flex">
@@ -42,7 +51,7 @@ export default function Menu({ pantalla, onIr, arriba }) {
             key={o.pantalla}
             onClick={() => onIr(o.pantalla)}
             aria-current={pantalla === o.pantalla ? 'page' : undefined}
-            className={`rounded-xl px-4 py-2 font-titulo font-bold ${
+            className={`relative rounded-xl px-4 py-2 font-titulo font-bold ${
               o.destacado
                 ? 'bg-neon text-fondo'
                 : pantalla === o.pantalla
@@ -51,6 +60,7 @@ export default function Menu({ pantalla, onIr, arriba }) {
             }`}
           >
             {o.destacado ? '+ Apuntar partido' : o.texto}
+            {avisos[o.pantalla] && <Punto />}
           </button>
         ))}
       </nav>
@@ -72,11 +82,12 @@ export default function Menu({ pantalla, onIr, arriba }) {
                 }`}
               >
                 <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-xl ${
                     o.destacado ? 'bg-neon text-fondo shadow-[0_0_16px_rgb(34_229_240/0.5)]' : ''
                   }`}
                 >
                   <Icono>{o.icono}</Icono>
+                  {avisos[o.pantalla] && <Punto />}
                 </span>
                 {o.texto}
               </button>

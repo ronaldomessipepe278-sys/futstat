@@ -3,6 +3,7 @@ import Actividad from '../components/Actividad.jsx'
 import CaraACara from '../components/CaraACara.jsx'
 import Mvp from '../components/Mvp.jsx'
 import { claveSemana, ganadores, semanaPasada } from '../logic/mvp.js'
+import { esNuevo } from '../logic/novedades.js'
 import { insigniasConseguidas } from '../logic/insignias.js'
 import * as nube from '../logic/nube.js'
 import {
@@ -30,18 +31,19 @@ function recordarGrupoElegido(id) {
   }
 }
 
-export default function MiGrupo({ yo, codigoInvitacion, onInvitacionUsada }) {
+export default function MiGrupo({ yo, visitaAnterior, codigoInvitacion, onInvitacionUsada }) {
   if (!nube.hayNube) return <Proximamente />
   return (
     <GruposConectados
       yo={yo}
+      visitaAnterior={visitaAnterior}
       codigoInvitacion={codigoInvitacion}
       onInvitacionUsada={onInvitacionUsada}
     />
   )
 }
 
-function GruposConectados({ yo, codigoInvitacion, onInvitacionUsada }) {
+function GruposConectados({ yo, visitaAnterior, codigoInvitacion, onInvitacionUsada }) {
   const [grupos, setGrupos] = useState(null)
   const [elegido, setElegido] = useState(leerGrupoElegido)
   const [jugadores, setJugadores] = useState(null)
@@ -158,6 +160,7 @@ function GruposConectados({ yo, codigoInvitacion, onInvitacionUsada }) {
         grupo && (
           <VistaGrupo
             grupo={grupo}
+            visitaAnterior={visitaAnterior}
             jugadores={jugadores}
             yo={yo}
             onSalir={async () => {
@@ -247,7 +250,7 @@ function CrearOUnirse({ onAccion }) {
   )
 }
 
-function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
+function VistaGrupo({ grupo, jugadores, yo, visitaAnterior, onSalir }) {
   const ranking = useMemo(
     () =>
       (jugadores ?? [])
@@ -277,6 +280,9 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
   if (jugadores === null) return <Cargando />
 
   const mvpPasados = new Set(ganadores(votos, semanaPasada()))
+  const actividadNueva = ranking.some(
+    (j) => j.id !== yo.id && j.partidos.some((p) => esNuevo(p.fecha, visitaAnterior)),
+  )
   // Solo hay líder si el primero va por delante del segundo (no en empate)
   const hayLider = ranking.length > 1 && ranking[0].valoracion > ranking[1].valoracion
 
@@ -311,6 +317,11 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
             }`}
           >
             {texto}
+            {id === 'actividad' && actividadNueva && pestana !== 'actividad' && (
+              <span className="ml-1 inline-block h-2 w-2 rounded-full bg-baja align-middle">
+                <span className="sr-only">Hay novedades</span>
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -373,7 +384,9 @@ function VistaGrupo({ grupo, jugadores, yo, onSalir }) {
         </section>
       )}
 
-      {pestana === 'actividad' && <Actividad jugadores={ranking} yo={yo} />}
+      {pestana === 'actividad' && (
+        <Actividad jugadores={ranking} yo={yo} visitaAnterior={visitaAnterior} />
+      )}
 
       {pestana === 'mvp' && (
         <Mvp

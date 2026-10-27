@@ -3,6 +3,7 @@ import Menu from './components/Menu.jsx'
 import { borrarDatos, cargarDatos, guardarDatos } from './logic/almacen.js'
 import * as nube from './logic/nube.js'
 import { insigniasConseguidas } from './logic/insignias.js'
+import { esNuevo, marcarVisto, ultimaVisita } from './logic/novedades.js'
 import { retosActuales } from './logic/retos.js'
 import { cambioUltimoPartido } from './logic/valoracion.js'
 import ApuntarPartido from './pantallas/ApuntarPartido.jsx'
@@ -53,6 +54,10 @@ export default function App() {
   const [crearAbierto, setCrearAbierto] = useState(false)
   const [aviso, setAviso] = useState(null)
   const temporizadorAviso = useRef(null)
+  // Avisos dentro de la web: lo último que pasó en tus grupos y cuándo lo miraste
+  const [novedad, setNovedad] = useState(null)
+  const [visto, setVisto] = useState(ultimaVisita)
+  const [visitaAnterior, setVisitaAnterior] = useState(visto)
 
   useEffect(() => {
     const alCambiar = () => {
@@ -86,6 +91,33 @@ export default function App() {
   useEffect(() => {
     if (nube.hayNube) recargar()
   }, [recargar])
+
+  // Comprobamos si hay novedades al abrir, cada 2 minutos y al volver a la pestaña
+  const miId = datos?.jugador?.id
+  useEffect(() => {
+    if (!nube.hayNube || !miId) return
+    const comprobarNovedades = () =>
+      nube
+        .ultimaNovedad(miId)
+        .then(setNovedad)
+        .catch(() => {})
+    comprobarNovedades()
+    const intervalo = setInterval(comprobarNovedades, 2 * 60 * 1000)
+    const alVolver = () => document.visibilityState === 'visible' && comprobarNovedades()
+    document.addEventListener('visibilitychange', alVolver)
+    return () => {
+      clearInterval(intervalo)
+      document.removeEventListener('visibilitychange', alVolver)
+    }
+  }, [miId])
+
+  // Al entrar en "Mi grupo" se marca todo como visto (y también al salir)
+  useEffect(() => {
+    if (pantalla !== 'grupo') return
+    setVisitaAnterior(ultimaVisita())
+    setVisto(marcarVisto())
+    return () => setVisto(marcarVisto())
+  }, [pantalla])
 
   const invitacionUsada = useCallback(() => {
     guardarInvitacion(null)
@@ -256,6 +288,7 @@ export default function App() {
     contenido = (
       <MiGrupo
         yo={datos.jugador}
+        visitaAnterior={visitaAnterior}
         codigoInvitacion={invitacion}
         onInvitacionUsada={invitacionUsada}
       />
@@ -282,6 +315,7 @@ export default function App() {
 
   // El menú se ve cuando ya tienes carta (abajo en el móvil, arriba en el ordenador)
   const hayMenu = Boolean(datos?.jugador) && !codigoNuevo
+  const avisos = { grupo: pantalla !== 'grupo' && esNuevo(novedad, visto) }
   // "Mi carta" y "Mi grupo" aprovechan el ancho del ordenador; el resto, columna estrecha
   const ancha = hayMenu && (pantalla === 'carta' || pantalla === 'grupo')
 
@@ -291,7 +325,7 @@ export default function App() {
         <button onClick={() => irA('carta')} className="font-titulo text-2xl font-bold">
           Fut<span className="text-neon">Stat</span>
         </button>
-        {hayMenu && <Menu pantalla={pantalla} onIr={irA} arriba />}
+        {hayMenu && <Menu pantalla={pantalla} onIr={irA} avisos={avisos} arriba />}
       </header>
 
       {error && (
@@ -333,7 +367,7 @@ export default function App() {
         <span> · FutStat no tiene relación con EA Sports, FIFA ni ningún club.</span>
       </footer>
 
-      {hayMenu && <Menu pantalla={pantalla} onIr={irA} />}
+      {hayMenu && <Menu pantalla={pantalla} onIr={irA} avisos={avisos} />}
     </div>
   )
 }

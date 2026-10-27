@@ -40,6 +40,7 @@ npm run formato   # deja el código bien ordenado (Prettier)
 
 - [x] Fase 1: Mi carta (con resumen y evolución) + Apuntar partido + menú inferior (datos en el navegador)
 - [x] Fase 2: cuentas con código de acceso, base de datos (Supabase), grupos, ranking y cara a cara
+- [x] Fase 6: avisos dentro de la web (punto rojo en «Mi grupo» y etiquetas «Nuevo»)
 - [x] Fase 5: votación «MVP de la semana» en cada grupo
 - [x] Fase 4: retos semanales, insignias y feed de actividad del grupo
 - [x] Fase 3: PWA instalable, compartir carta como imagen (1080x1350), aviso al guardar partido, versión de ordenador

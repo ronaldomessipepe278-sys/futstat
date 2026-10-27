@@ -17,9 +17,9 @@ export default function Privacidad({ hayNube, onVolver, onBorrarTodo }) {
             <strong>código de acceso</strong> que se crea al hacer su carta.
           </p>
           <p>
-            Guardamos tu apodo, tus atributos, tus partidos (resultado, goles, asistencias y nota) y
-            los grupos a los que perteneces. Esos datos están en Supabase, nuestro proveedor de base
-            de datos.
+            Guardamos tu apodo, tus atributos, tus partidos (resultado, goles, asistencias y nota),
+            los grupos a los que perteneces y tus votos al MVP de la semana. Esos datos están en
+            Supabase, nuestro proveedor de base de datos.
           </p>
           <p>
             Tu carta y tus partidos solo los ven las personas de tus grupos. Nadie más puede verlos.

@@ -1,4 +1,5 @@
 import { insigniasConseguidas } from '../logic/insignias.js'
+import { esNuevo } from '../logic/novedades.js'
 import { valoracionGeneral } from '../logic/valoracion.js'
 
 const PARTIDOS_POR_JUGADOR = 10 // solo miramos los últimos de cada uno
@@ -52,7 +53,7 @@ function haceCuanto(fecha) {
   return new Date(fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
 }
 
-export default function Actividad({ jugadores, yo }) {
+export default function Actividad({ jugadores, yo, visitaAnterior }) {
   const eventos = eventosDelGrupo(jugadores)
 
   if (eventos.length === 0) {
@@ -99,7 +100,14 @@ export default function Actividad({ jugadores, yo }) {
                   {` · nota ${e.partido.nota}`}
                 </p>
               )}
-              <p className="text-xs text-apagado">{haceCuanto(e.fecha)}</p>
+              <p className="text-xs text-apagado">
+                {haceCuanto(e.fecha)}
+                {e.jugador.id !== yo.id && esNuevo(e.fecha, visitaAnterior) && (
+                  <span className="ml-2 rounded-full bg-baja px-2 py-0.5 font-titulo text-[10px] font-bold text-texto uppercase">
+                    Nuevo
+                  </span>
+                )}
+              </p>
             </div>
             {e.tipo === 'partido' && e.cambio !== 0 && (
               <span
