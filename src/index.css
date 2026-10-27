@@ -1,0 +1,67 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/chakra-petch/500.css';
+@import '@fontsource/chakra-petch/700.css';
+@import 'tailwindcss';
+
+/* Colores y tipografías de FutStat: cambia aquí y cambia en toda la web */
+@theme {
+  --color-fondo: #05080f;
+  --color-panel: #0c1322;
+  --color-borde: #1c2a44;
+  --color-neon: #22e5f0;
+  --color-neon-suave: #0e7c8a;
+  --color-texto: #e6f6ff;
+  --color-apagado: #7d8fa9;
+  --color-sube: #3dffa2;
+  --color-baja: #ff4d6d;
+  --font-titulo: 'Chakra Petch', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 50% -10%, rgb(34 229 240 / 0.12), transparent 55%),
+    linear-gradient(rgb(34 229 240 / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(34 229 240 / 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-attachment: fixed;
+  min-height: 100dvh;
+}
+
+/* Forma de la carta: esquinas cortadas en diagonal (diseño propio) */
+.forma-carta {
+  clip-path: polygon(14% 0, 86% 0, 100% 8%, 100% 92%, 86% 100%, 14% 100%, 0 92%, 0 8%);
+}
+
+@keyframes brillo {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 10px rgb(34 229 240 / 0.45));
+  }
+  50% {
+    filter: drop-shadow(0 0 22px rgb(34 229 240 / 0.8));
+  }
+}
+
+.brillo-neon {
+  animation: brillo 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brillo-neon {
+    animation: none;
+    filter: drop-shadow(0 0 14px rgb(34 229 240 / 0.6));
+  }
+}
+
+input[type='range'] {
+  accent-color: var(--color-neon);
+}
