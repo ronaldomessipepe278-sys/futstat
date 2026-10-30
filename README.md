@@ -2,6 +2,8 @@
 
 Web de estadísticas para jugadores de fútbol amateur: apuntas tus partidos y se genera tu carta de jugador.
 
+👉 **Web publicada: https://futstat-seven.vercel.app**
+
 ## Cómo arrancarla
 
 ```bash
